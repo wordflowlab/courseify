@@ -27,7 +27,55 @@ bash scripts/bash/content.sh
 
 ---
 
-## 第二步: 选择创作方式 ⚠️ 必须执行
+## 第二步: 检查激活的作者风格 ⚠️ 必须执行
+
+### 检查是否激活了作者 Persona
+
+```bash
+# AI 操作: 检查是否有激活的作者风格
+if [ -f ".courseify/active-persona.yaml" ]; then
+  echo "发现激活的作者风格"
+fi
+```
+
+### 如果存在激活的 Persona
+
+**读取并应用作者风格**:
+
+```bash
+# AI 操作: 读取 persona 配置
+Read: .courseify/active-persona.yaml
+```
+
+**从 YAML 中提取**:
+- `author.name` - 作者名
+- `author.course` - 课程名
+- `facilitation_prompts.when_creating_content` - 内容创作提示词
+
+**应用作者风格**:
+
+```
+🎭 检测到激活的作者风格: [author.name] (《[course]》)
+
+在创作内容时,我将参考该作者的教学风格:
+
+[显示 facilitation_prompts.when_creating_content 的内容]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💡 提示: 我会根据该作者的内容组织方式为你提供建议,
+         帮助你创作出符合该风格的章节内容。
+```
+
+**注意**: AI 在后续内容创作指导中,必须遵循该提示词中的内容组织结构。
+
+### 如果没有激活 Persona
+
+继续使用默认创作方式。
+
+---
+
+## 第三步: 选择创作方式 ⚠️ 必须执行
 
 ```
 ╔══════════════════════════════════════════════════════════╗
@@ -47,7 +95,7 @@ bash scripts/bash/content.sh
 
 ---
 
-## 第三步: 创作章节内容 ⚠️ 必须执行
+## 第四步: 创作章节内容 ⚠️ 必须执行
 
 ### 逐章创作流程
 

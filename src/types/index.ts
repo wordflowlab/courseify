@@ -121,3 +121,145 @@ export interface ExportConfig {
   include_scripts?: boolean;
   language?: string;
 }
+
+// ============ 参考课程系统 ============
+
+// 参考专栏元信息
+export interface ReferenceCourse {
+  name: string;
+  field: string;
+  level: string;
+  chapter_count: number;
+  description: string;
+  keywords?: string[];
+  path: string;
+  created_at?: string;
+}
+
+// 参考课程索引
+export interface ReferenceCourseIndex {
+  version: string;
+  updated_at: string;
+  total_courses: number;
+  courses: ReferenceCourse[];
+}
+
+// 专栏章节
+export interface ReferenceChapter {
+  number: string;
+  title: string;
+  filename: string;
+}
+
+// 专栏分析结果
+export interface CourseAnalysis {
+  course: ReferenceCourse;
+  chapters: ReferenceChapter[];
+  structure: {
+    phases: CoursePhase[];      // 课程阶段划分
+    transitions: string[];      // 关键转折点
+    density: number;            // 知识点密度(0-100)
+  };
+  insights: {
+    title_style: string;        // 标题风格
+    content_balance: {          // 内容平衡
+      theory: number;
+      practice: number;
+      exercises: number;
+    };
+    strengths: string[];        // 设计亮点
+    suggestions: string[];      // 应用建议
+  };
+}
+
+// 课程阶段
+export interface CoursePhase {
+  name: string;               // 阶段名称(预习篇/基础篇/进阶篇)
+  chapter_range: string;      // 章节范围 "1-5"
+  goal: string;               // 学习目标
+  characteristics: string;    // 教学特点
+}
+
+// 智能推荐结果
+export interface CourseRecommendation {
+  course: ReferenceCourse;
+  score: number;              // 匹配分数(0-100)
+  match_reasons: string[];    // 匹配理由
+  reference_value: {          // 参考价值
+    structure: string;
+    teaching: string;
+    practice: string;
+  };
+}
+
+// ============ 风格模拟系统 (Persona) ============
+
+// 作者 Persona 元信息
+export interface PersonaMetadata {
+  id: string;
+  name: string;
+  course: string;
+  field: string;
+  level: string;
+  style_summary: string;
+  config_file: string;
+}
+
+// Persona 清单
+export interface PersonaManifest {
+  version: string;
+  updated_at: string;
+  total_personas: number;
+  personas: PersonaMetadata[];
+}
+
+// 作者信息
+export interface AuthorInfo {
+  name: string;
+  course: string;
+  role: string;
+  background?: string;
+}
+
+// Persona 配置
+export interface AuthorPersona {
+  author: AuthorInfo;
+  persona: {
+    identity: string;
+    teaching_philosophy: string[];
+    communication_style: string;
+  };
+  structure_patterns: {
+    preferred_course_structure?: any[];
+    title_style?: {
+      pattern: string;
+      examples: string[];
+      formula?: string;
+    };
+  };
+  content_organization?: {
+    standard_flow?: any[];
+    content_balance?: {
+      [key: string]: number;
+    };
+  };
+  signature_elements?: {
+    must_have?: any[];
+    preferred_teaching_methods?: string[];
+  };
+  quality_standards?: any;
+  facilitation_prompts: {
+    when_designing_outline: string;
+    when_creating_content: string;
+    when_reviewing_quality: string;
+    when_stuck?: string;
+  };
+}
+
+// 激活的 Persona 状态
+export interface ActivePersonaStatus {
+  active: boolean;
+  persona?: AuthorPersona;
+  persona_file?: string;
+  activated_at?: string;
+}

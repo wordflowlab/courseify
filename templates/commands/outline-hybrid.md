@@ -64,7 +64,69 @@ bash scripts/bash/outline.sh --mode hybrid
 
 ---
 
-## 第二步: AI生成大纲框架 ⚠️ 必须执行
+## 第二步: 检查参考课程推荐 ⚠️ 可选
+
+如果存在参考课程库,提示用户是否查看推荐。
+
+```
+💡 发现参考课程库
+
+是否需要查看推荐专栏的结构? (y/n)
+```
+
+如果用户选择查看,运行 `/reference` 后继续。
+
+---
+
+## 第三步: 检查激活的作者风格 ⚠️ 必须执行
+
+### 检查是否激活了作者 Persona
+
+```bash
+# AI 操作: 检查是否有激活的作者风格
+if [ -f ".courseify/active-persona.yaml" ]; then
+  echo "发现激活的作者风格"
+fi
+```
+
+### 如果存在激活的 Persona
+
+**读取并应用作者风格**:
+
+```bash
+# AI 操作: 读取 persona 配置
+Read: .courseify/active-persona.yaml
+```
+
+**从 YAML 中提取**:
+- `author.name` - 作者名
+- `author.course` - 课程名
+- `facilitation_prompts.when_designing_outline` - 大纲设计提示词
+
+**应用作者风格**:
+
+```
+🎭 检测到激活的作者风格: [author.name] (《[course]》)
+
+在生成大纲框架时,我将参考该作者的教学风格:
+
+[显示 facilitation_prompts.when_designing_outline 的内容]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💡 提示: 我会生成符合该作者风格的框架,
+         并在你填充内容时提供相应的指导建议。
+```
+
+**注意**: AI 在后续生成框架和提供建议时,必须遵循该提示词中的指导原则。
+
+### 如果没有激活 Persona
+
+继续使用默认方式。
+
+---
+
+## 第四步: AI生成大纲框架 ⚠️ 必须执行
 
 **展示生成过程**:
 

@@ -1,8 +1,8 @@
 {
   "name": "ai-courseify",
-  "version": "0.1.0",
+  "version": "0.4.0",
   "type": "module",
-  "description": "AI 驱动的课程内容生成工具 - 支持全流程创作、三种创作模式、多平台导出",
+  "description": "AI 驱动的课程内容生成工具 - 支持全流程创作、风格模拟、Persona训练、多平台导出",
   "keywords": [
     "course",
     "education",
@@ -23,6 +23,7 @@
     "dist/",
     "scripts/",
     "templates/",
+    "docs/",
     "README.md",
     "CHANGELOG.md"
   ],

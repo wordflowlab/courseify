@@ -1,0 +1,52 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2025-11-01T00:00:00Z",
+  "total_personas": 5,
+  "personas": [
+    {
+      "id": "chen-hang-flutter",
+      "name": "陈航",
+      "course": "Flutter核心技术与实战",
+      "field": "编程开发",
+      "level": "高级",
+      "style_summary": "技术深入、原理讲解、实战结合",
+      "config_file": "chen-hang-flutter.yaml"
+    },
+    {
+      "id": "lin-xiaobin-mysql",
+      "name": "林晓斌",
+      "course": "MySQL实战45讲",
+      "field": "编程开发",
+      "level": "高级",
+      "style_summary": "问题导向、深入浅出、生产案例",
+      "config_file": "lin-xiaobin-mysql.yaml"
+    },
+    {
+      "id": "ni-pengfei-linux",
+      "name": "倪朋飞",
+      "course": "Linux性能优化实战",
+      "field": "职业技能",
+      "level": "高级",
+      "style_summary": "实战为主、工具演示、性能分析",
+      "config_file": "ni-pengfei-linux.yaml"
+    },
+    {
+      "id": "chen-tian-rust",
+      "name": "陈天",
+      "course": "Rust编程第一课",
+      "field": "编程开发",
+      "level": "进阶",
+      "style_summary": "循序渐进、概念清晰、实例丰富",
+      "config_file": "chen-tian-rust.yaml"
+    },
+    {
+      "id": "zhang-lei-kubernetes",
+      "name": "张磊",
+      "course": "深入剖析Kubernetes",
+      "field": "编程开发",
+      "level": "高级",
+      "style_summary": "架构思维、原理剖析、生产实践",
+      "config_file": "zhang-lei-kubernetes.yaml"
+    }
+  ]
+}

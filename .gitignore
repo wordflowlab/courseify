@@ -2,6 +2,16 @@ node_modules/
 dist/
 .DS_Store
 *.log
+
+# 用户的参考课程数据(不提交到仓库)
+reference-courses/*
+!reference-courses/.gitkeep
+!reference-courses/README.md
+!reference-courses/personas/
+reference-courses/personas/*
+!reference-courses/personas/.gitkeep
+!reference-courses/personas/manifest.json
+!reference-courses/personas/*.yaml
 .courseify/
 spec.json
 objective.json
@@ -11,3 +21,4 @@ chapters/
 exercises/
 scripts_output/
 exports/
+# other/

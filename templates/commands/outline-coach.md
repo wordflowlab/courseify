@@ -52,7 +52,80 @@ bash scripts/bash/outline.sh --mode coach
 
 ---
 
-## 章节设计流程
+## 第二步: 检查参考课程推荐 ⚠️ 可选
+
+### 检查是否有参考课程索引
+
+如果存在 `reference-courses/index.json`:
+
+**提示用户**:
+
+```
+💡 发现参考课程库
+
+我已找到参考专栏,可以帮助你学习优秀课程的章节划分方法。
+
+是否需要查看推荐? (y/n)
+  y - 查看相似专栏的结构设计
+  n - 直接开始原创设计
+```
+
+如果用户选择查看,运行 `/reference` 后继续。
+
+---
+
+## 第三步: 检查激活的作者风格 ⚠️ 必须执行
+
+### 检查是否激活了作者 Persona
+
+```bash
+# AI 操作: 检查是否有激活的作者风格
+if [ -f ".courseify/active-persona.yaml" ]; then
+  echo "发现激活的作者风格"
+fi
+```
+
+### 如果存在激活的 Persona
+
+**读取并应用作者风格**:
+
+```bash
+# AI 操作: 读取 persona 配置
+Read: .courseify/active-persona.yaml
+```
+
+**从 YAML 中提取**:
+- `author.name` - 作者名
+- `author.course` - 课程名
+- `facilitation_prompts.when_designing_outline` - 大纲设计提示词
+
+**应用作者风格**:
+
+```
+🎭 检测到激活的作者风格: [author.name] (《[course]》)
+
+在引导你设计大纲时,我将参考该作者的教学风格:
+
+[显示 facilitation_prompts.when_designing_outline 的内容]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💡 提示: 我会在引导问题中融入该作者的设计理念,
+         但最终的大纲设计仍然由你自己完成。
+```
+
+**注意**: AI 在后续引导过程中,应该:
+1. 参考该作者的结构偏好提出建议
+2. 用该作者的教学理念启发用户思考
+3. 但**绝不能**直接代替用户设计内容
+
+### 如果没有激活 Persona
+
+继续使用默认引导方式。
+
+---
+
+## 第四步: 章节设计流程
 
 ### 示例: 设计第1章
 
