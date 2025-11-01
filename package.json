@@ -57,7 +57,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/wordflowlab/courseify"
+    "url": "git+https://github.com/wordflowlab/courseify.git"
   },
   "homepage": "https://github.com/wordflowlab/courseify#readme",
   "bugs": {
