@@ -2,6 +2,25 @@
 
 All notable changes to Courseify will be documented in this file.
 
+## [0.4.2] - 2025-11-01
+
+### 🔧 Fixed - Windows 跨平台支持
+
+**修复 Windows PowerShell 脚本执行问题**
+
+- 修复 `bash-runner.ts` 在 Windows 环境下强制调用 bash 导致的错误
+- 新增 `getScriptConfig()` 函数,根据项目配置自动选择 Bash 或 PowerShell
+- 新增 Windows 根目录检测 (C:\)
+- PowerShell 脚本现在正确使用 `powershell.exe -ExecutionPolicy Bypass -NoProfile -File` 执行
+- Bash 脚本继续使用 `bash` 执行
+
+**影响**:
+- Windows 用户选择 PowerShell 后,slash commands 将正确执行 `.ps1` 脚本
+- 不再出现 "unexpected EOF while looking for matching" 错误
+- Mac/Linux 用户不受影响,继续使用 Bash 脚本
+
+---
+
 ## [0.4.1] - 2025-11-01
 
 ### 🔧 Fixed - PowerShell Scripts

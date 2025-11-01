@@ -1,5 +1,5 @@
 /**
- * Bash script execution utilities
+ * Bash/PowerShell script execution utilities
  */
 
 import { spawn } from 'child_process';
@@ -13,12 +13,19 @@ import { BashResult } from '../types/index.js';
 function findProjectRoot(): string {
   let current = process.cwd();
 
-  while (current !== '/') {
+  // Windows root detection (C:\ etc.)
+  const isWindowsRoot = (p: string) => {
+    return /^[a-zA-Z]:\\?$/.test(p);
+  };
+
+  while (current !== '/' && !isWindowsRoot(current)) {
     const configPath = path.join(current, '.courseify', 'config.json');
     if (fs.existsSync(configPath)) {
       return current;
     }
-    current = path.dirname(current);
+    const parent = path.dirname(current);
+    if (parent === current) break; // Reached root
+    current = parent;
   }
 
   // Fallback to current directory
@@ -26,7 +33,28 @@ function findProjectRoot(): string {
 }
 
 /**
- * Execute a bash script and return parsed JSON result
+ * Get script configuration from project config
+ */
+function getScriptConfig(projectRoot: string): { scriptType: string; scriptDir: string } {
+  const configPath = path.join(projectRoot, '.courseify', 'config.json');
+
+  if (fs.existsSync(configPath)) {
+    try {
+      const config = fs.readJsonSync(configPath);
+      const scriptType = config.scriptType || 'sh';
+      const scriptDir = scriptType === 'ps1' ? 'powershell' : 'bash';
+      return { scriptType, scriptDir };
+    } catch (error) {
+      // Fall back to bash if config is invalid
+    }
+  }
+
+  // Default to bash
+  return { scriptType: 'sh', scriptDir: 'bash' };
+}
+
+/**
+ * Execute a bash/powershell script and return parsed JSON result
  */
 export async function executeBashScript(
   scriptName: string,
@@ -34,14 +62,43 @@ export async function executeBashScript(
 ): Promise<BashResult> {
   return new Promise((resolve, reject) => {
     const projectRoot = findProjectRoot();
+    const { scriptType, scriptDir } = getScriptConfig(projectRoot);
+
+    // Determine script path and command
+    const scriptExt = scriptType === 'ps1' ? '.ps1' : '.sh';
     const scriptPath = path.join(
       projectRoot,
       'scripts',
-      'bash',
-      `${scriptName}.sh`
+      scriptDir,
+      `${scriptName}${scriptExt}`
     );
 
-    const child = spawn('bash', [scriptPath, ...args], {
+    // Check if script exists
+    if (!fs.existsSync(scriptPath)) {
+      reject(new Error(`Script not found: ${scriptPath}`));
+      return;
+    }
+
+    // Determine command and arguments
+    let command: string;
+    let commandArgs: string[];
+
+    if (scriptType === 'ps1') {
+      // PowerShell
+      command = 'powershell.exe';
+      commandArgs = [
+        '-ExecutionPolicy', 'Bypass',
+        '-NoProfile',
+        '-File', scriptPath,
+        ...args
+      ];
+    } else {
+      // Bash
+      command = 'bash';
+      commandArgs = [scriptPath, ...args];
+    }
+
+    const child = spawn(command, commandArgs, {
       cwd: process.cwd(),
       env: process.env
     });
@@ -79,7 +136,7 @@ export async function executeBashScript(
 }
 
 /**
- * Execute a bash script with real-time output
+ * Execute a bash/powershell script with real-time output
  */
 export async function executeBashScriptWithOutput(
   scriptName: string,
@@ -87,14 +144,43 @@ export async function executeBashScriptWithOutput(
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     const projectRoot = findProjectRoot();
+    const { scriptType, scriptDir } = getScriptConfig(projectRoot);
+
+    // Determine script path and command
+    const scriptExt = scriptType === 'ps1' ? '.ps1' : '.sh';
     const scriptPath = path.join(
       projectRoot,
       'scripts',
-      'bash',
-      `${scriptName}.sh`
+      scriptDir,
+      `${scriptName}${scriptExt}`
     );
 
-    const child = spawn('bash', [scriptPath, ...args], {
+    // Check if script exists
+    if (!fs.existsSync(scriptPath)) {
+      reject(new Error(`Script not found: ${scriptPath}`));
+      return;
+    }
+
+    // Determine command and arguments
+    let command: string;
+    let commandArgs: string[];
+
+    if (scriptType === 'ps1') {
+      // PowerShell
+      command = 'powershell.exe';
+      commandArgs = [
+        '-ExecutionPolicy', 'Bypass',
+        '-NoProfile',
+        '-File', scriptPath,
+        ...args
+      ];
+    } else {
+      // Bash
+      command = 'bash';
+      commandArgs = [scriptPath, ...args];
+    }
+
+    const child = spawn(command, commandArgs, {
       cwd: process.cwd(),
       env: process.env,
       stdio: 'inherit' // Show output in real-time
