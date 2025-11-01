@@ -2,6 +2,21 @@
 
 All notable changes to Courseify will be documented in this file.
 
+## [0.4.1] - 2025-11-01
+
+### 🔧 Fixed - PowerShell Scripts
+
+**跨平台支持完善** - 添加 Windows PowerShell 版本的新脚本
+
+- 新增 `scripts/powershell/reference.ps1` - 参考课程推荐
+- 新增 `scripts/powershell/analyze.ps1` - 专栏结构分析
+- 新增 `scripts/powershell/mimic.ps1` - 风格模拟管理
+- 新增 `scripts/powershell/train.ps1` - Persona 训练
+
+这些脚本与 Bash 版本功能完全一致,确保 Windows 用户也能使用 v0.2.0-v0.4.0 的所有新功能。
+
+---
+
 ## [0.3.0] - 2025-11-01
 
 ### ✨ Added - Author Persona System (风格模拟系统)
