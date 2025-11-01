@@ -19,6 +19,29 @@ All notable changes to Courseify will be documented in this file.
 - 不再出现 "unexpected EOF while looking for matching" 错误
 - Mac/Linux 用户不受影响,继续使用 Bash 脚本
 
+### ⚠️ 迁移说明 - 如果你在 v0.4.1 之前创建了项目
+
+由于 outline 命令已合并为单一文件 (v0.4.1),如果你的项目是在 v0.4.1 之前创建的,需要更新命令文件:
+
+```bash
+# 删除旧的 outline 命令文件
+rm .claude/commands/outline-coach.md
+rm .claude/commands/outline-express.md
+rm .claude/commands/outline-hybrid.md
+
+# 从 npm 包复制新的 outline.md
+# Mac/Linux:
+cp node_modules/ai-courseify/templates/commands/outline.md .claude/commands/
+
+# Windows PowerShell:
+# Copy-Item node_modules\ai-courseify\templates\commands\outline.md .claude\commands\
+```
+
+或者直接从 GitHub 下载最新的 outline.md:
+```bash
+curl -o .claude/commands/outline.md https://raw.githubusercontent.com/wordflowlab/courseify/main/templates/commands/outline.md
+```
+
 ---
 
 ## [0.4.1] - 2025-11-01
