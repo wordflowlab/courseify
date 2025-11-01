@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.DS_Store
+*.log
+.courseify/
+spec.json
+objective.json
+structure.json
+outline.md
+chapters/
+exercises/
+scripts_output/
+exports/
