@@ -1,4 +1,4 @@
-# 生成课程大纲(支持三种模式)
+# 生成课程大纲 - 分章生成模式
 
 # 加载通用函数库
 . "$PSScriptRoot\common.ps1"
@@ -11,15 +11,41 @@ $structureFile = Test-StructureExists
 # 获取项目路径
 $projectDir = Get-CurrentProject
 $projectName = Get-ProjectName
-$outlineFile = Join-Path $projectDir "outline.md"
-$modeFile = Join-Path $projectDir ".courseify\creation_mode"
+$outlinesDir = Join-Path $projectDir "outlines"
+$progressFile = Join-Path $projectDir ".courseify\outline-progress.json"
+
+# 确保 outlines 目录存在
+Ensure-Directory $outlinesDir
 
 # 解析命令行参数
-$mode = "coach"
+$chapter = $null
+$fromChapter = $null
+$retryChapter = $null
+$continue = $false
+
 for ($i = 0; $i -lt $args.Count; $i++) {
-    if ($args[$i] -eq "--mode" -and $i + 1 -lt $args.Count) {
-        $mode = $args[$i + 1]
-        $i++
+    switch ($args[$i]) {
+        "--chapter" {
+            if ($i + 1 -lt $args.Count) {
+                $chapter = [int]$args[$i + 1]
+                $i++
+            }
+        }
+        "--from" {
+            if ($i + 1 -lt $args.Count) {
+                $fromChapter = [int]$args[$i + 1]
+                $i++
+            }
+        }
+        "--retry" {
+            if ($i + 1 -lt $args.Count) {
+                $retryChapter = [int]$args[$i + 1]
+                $i++
+            }
+        }
+        "--continue" {
+            $continue = $true
+        }
     }
 }
 
@@ -28,51 +54,58 @@ $specContent = Get-Content $specFile -Raw | ConvertFrom-Json
 $objectiveContent = Get-Content $objectiveFile -Raw | ConvertFrom-Json
 $structureContent = Get-Content $structureFile -Raw | ConvertFrom-Json
 
-# 保存创作模式
-Ensure-Directory (Join-Path $projectDir ".courseify")
-$mode | Set-Content $modeFile -Encoding UTF8
+# 获取总章节数
+$totalChapters = $structureContent.chapters.Count
 
-# 如果已有大纲文件
-if (Test-Path $outlineFile) {
-    $result = @{
-        status = "success"
-        action = "review"
-        project_name = $projectName
-        outline_file = $outlineFile
-        mode = $mode
-        spec = $specContent
-        objective = $objectiveContent
-        structure = $structureContent
-        message = "找到现有大纲，AI 可引导用户修改或审阅"
-    } | ConvertTo-Json -Compress -Depth 10
-
-    Write-Output $result
+# 读取或初始化进度文件
+if (Test-Path $progressFile) {
+    $progressContent = Get-Content $progressFile -Raw | ConvertFrom-Json
+    $completedChapters = $progressContent.completed -join ","
+    $currentChapter = $progressContent.current
+    $failedChapters = $progressContent.failed -join ","
 } else {
-    # 创建初始模板
-    $template = @"
-# $projectName - 课程大纲
-
-> 创作模式: $mode
-
-## 课程概述
-
-## 章节大纲
-
-"@
-
-    $template | Set-Content $outlineFile -Encoding UTF8
-
-    $result = @{
-        status = "success"
-        action = "create"
-        project_name = $projectName
-        outline_file = $outlineFile
-        mode = $mode
-        spec = $specContent
-        objective = $objectiveContent
-        structure = $structureContent
-        message = "已创建大纲模板，AI 应根据模式($mode)引导用户创作"
-    } | ConvertTo-Json -Compress -Depth 10
-
-    Write-Output $result
+    $completedChapters = ""
+    $currentChapter = 1
+    $failedChapters = ""
+    # 创建初始进度文件
+    Ensure-Directory (Join-Path $projectDir ".courseify")
+    $initialProgress = @{
+        total_chapters = $totalChapters
+        completed = @()
+        current = 1
+        failed = @()
+        updated_at = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
+    }
+    $initialProgress | ConvertTo-Json -Depth 10 | Set-Content $progressFile -Encoding UTF8
 }
+
+# 处理特定章节生成
+if ($null -ne $chapter) {
+    $currentChapter = $chapter
+} elseif ($null -ne $fromChapter) {
+    $currentChapter = $fromChapter
+} elseif ($null -ne $retryChapter) {
+    $currentChapter = $retryChapter
+} elseif ($continue) {
+    # 使用进度文件中的当前章节
+    $currentChapter = $currentChapter
+}
+
+# 输出给 AI 的 JSON
+$result = @{
+    status = "success"
+    action = "generate_outline"
+    project_name = $projectName
+    outlines_dir = $outlinesDir
+    total_chapters = $totalChapters
+    completed_chapters = $completedChapters
+    current_chapter = $currentChapter
+    failed_chapters = $failedChapters
+    spec = $specContent
+    objective = $objectiveContent
+    structure = $structureContent
+    progress_file = $progressFile
+    message = "AI 应逐章生成大纲,每章保存到独立文件"
+}
+
+$result | ConvertTo-Json -Compress -Depth 10
